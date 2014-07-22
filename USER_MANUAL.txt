@@ -1,0 +1,124 @@
+   __                       
+  / /__________ _____  _____
+ / __/ ___/ __ `/ __ \/ ___/
+/ /_/ /  / /_/ / / / (__  ) 
+\__/_/   \__,_/_/ /_/____/  
+    _                                             __               _     
+   (_)________  ____  ____ ___  ____  _________  / /_  ____  _____(_)____
+  / / ___/ __ \/ __ \/ __ `__ \/ __ \/ ___/ __ \/ __ \/ __ \/ ___/ / ___/
+ / / /__/ /_/ / / / / / / / / / /_/ / /  / /_/ / / / / /_/ (__  ) (__  ) 
+/_/\___/\____/_/ /_/_/ /_/ /_/\____/_/  / .___/_/ /_/\____/____/_/____/  
+                                       /_/                               
+                                                                                                                                                                                                        
+/////////////////////////////////////////////////
+//////// fito_segrera & Emilio Vavarella ////////
+////////////// Installation Manual //////////////
+/////////////////////////////////////////////////
+
+---------------------------
+|SOME TECHNICAL BACKGROUND|
+---------------------------
+The chat application used in TRANSICONMORPHOSIS uses:
+	- NODEJS and the modules: socket.io, node-static, http, sys, connect, my-ip... the main server runs at "http://localhost:2013"
+	- simpleWebRTC.js: a javascript implementation of webRTC technology for video streaming. 
+	This is run locally (no internet connection needed) by implementing a local signal server at "http://localhost:8888"
+	Normally this signal server runs on an online server from the simplewebRTC developers....
+	-ARDUINO microcontroller
+
+For more information on these technologies please visit:
+	- http://nodejs.org/
+	- https://www.npmjs.org/package/socket.io
+	- https://www.npmjs.org/package/node-static
+	- https://www.npmjs.org/package/http
+	- https://www.npmjs.org/package/sys
+	- https://www.npmjs.org/package/connect
+	- https://www.npmjs.org/package/my-ip
+	- https://www.npmjs.org/package/arduino-firmata
+	- https://www.npmjs.org/package/serialport
+	- http://simplewebrtc.com/
+	- https://bitbucket.org/webrtc/codelab/src
+	- https://github.com/andyet/signalmaster (source code for the signal server)
+	- http://www.arduino.cc/
+
+------------------------
+|PREPARING THE MACHINES|
+------------------------
+
+IMPORTANT NOTE: It is unconditional that both computers are connected to the same network with acces to the internet. The webRTC implementation in nodeJS uses a STUN server located at the url: 						   
+																						 	
+	stun:stun.l.google.com:19302														 
+
+Eachone of the two computers used in TRANSICONMORPHOSIS need to have installed:
+(INTERNET IS NEEDED FOR THE FOLLOWING STEPS AND THE REST OF THE PROCESS)
+
+	1. Chrome browser - Download from:
+
+		https://www.google.com/intl/en/chrome/browser/
+
+	2. NodeJS & npm:
+
+		For Linux (Ubuntu) through the terminal:
+			apt-get install python-software-properties
+			apt-add-repository ppa:chris-lea/node.js
+			apt-get update
+			apt-get install nodejs
+			apt-get install npm
+
+		For macOSX:
+			Navigate to /transiconmorphosis/resources/installers/nodeJS/macOSX
+			execute and install the package "node-v0.10.29.pkg"
+
+		For windows:
+			Navigate to /transiconmorphosis/resources/installers/nodeJS/windows
+			execute and install the package "node-v0.10.29-x86.msi"
+
+WARNING: All the nodejs modules are contained and installed inside the folder node_modules. If for any reasons in the following steps, after executing the server you get a module error, go to the main directory /transiconmorphosis/videoChatServer and run the following command:
+
+	sudo npm install
+
+This will re-install all the packages declared as dependencies in the file "package.json"
+
+--------------------
+|RUNNING THE SERVER|
+--------------------
+1. Connect the ARDUINO to the computer.
+2. On the artist computer copy the folder "transiconmorphosis" on the desktop.
+3. Runing the server is extremely simple. Using the terminal window: 
+
+	First type (or copy and paste to the terminal the following command):
+
+		cd  ~/Desktop/transiconmorphosis/videoChatServer/src
+	
+	Hit ENTER...
+	And then type:
+
+		node app.js
+
+	Hit ENTER again...
+
+You now should see something that looks like:
+
+	_______________________________
+	WELCOME TO TRANSICONMORPHOSIS!!
+	You are the ARTIST/PERFORMER
+	Open GOOGLE CHROME and browse http://localhost:2013
+	The other computer (the user) must browse http://10.0.1.14:2013
+	Stun Server running on PORT:8888, using the url: stun:stun.l.google.com:19302 
+
+IMPORTANT NOTES:
+
+Line 3 "Open GOOGLE CHROME and browse http://localhost:2013" is the instruction for the artist computer, you should type: http://localhost:2013 on the google chrome navigation bar, this will pop up the "allow video and audio" message, click ALLOW.
+
+Line 4 "The other computer (the user) must browse http://10.0.1.14:2013" reffers to the instruction for the other computer (user). Take note of "http://10.0.1.14:2013" (of course in your case the number will be different). Go the google chrome on the user's computer and type it on the navigation bar... CLICK ALLOW to the "allow video and audio" message.... same process. You now should see the camera feed from the artist and the chat should be up and running.
+
+The line "Serial-Ports Detected" Lists the serial ports currently in use by the computer. The code is setup to auto-detect arduino's serial port. But just in case the arduino is not responding to the emoticons in the chat, follow carefully the following instructions:
+	
+	1. Take Note of the serial ports listed. The one used by arduino should be something like: /dev/cu.usbmodemfa131
+	There is no one single port for the arduino, it changes from computer to computer.
+	2. open the file "server.js" Located at: "/Users/fitosegrera/Desktop/transiconmorphosis/"
+	3. on line 12 of the code, where the function "arduino.connect();" is called, type the name of the serial port used by the arduino board inside the parenthesis so it looks something like: arduino.connect('/dev/cu.usbmodemfa131'); This name will be different for every computer. 
+	IMPORTANT NOTE: If the serial port name you selected didn't work then try the otherones listed... One by one until the problem is fixed.
+
+To enter or exit fullscreen mode on google chrome (MAC) type: CMD+SHIFT+F or go to the "view" option of Chrome's menu and select "Enter Presentation Mode" (this prevents the users of closing windows or tabs)
+
+The Installation uses an ARDUINO UNO microcontroller with the "standard firmata" code loaded into it. In case you change the pre-loaded board, please connect your ARDUINO board with the USB cable, open the ARDUINO IDE (if not installed please do so from: http://arduino.cc/en/Main/Software), go to the menu "File/Examples/Firmata/StandardFirmata" and then "File/Upload". 
