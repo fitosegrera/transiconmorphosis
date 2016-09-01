@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="http://192.168.100.103:3300/socket.io/socket.io.js"></script>
+    <script src="http://simplewebrtc.com/latest.js"></script>
+    <script src="/lib/jquery-1.7.2.min.js"></script>
+    <style type="text/css">
+    
+    body {
+        background: #000;
+        color: rgb(200, 200, 200);
+        margin: 0px;
+        height: 100%;
+        width: 100%;
+        font-family: monospace;
+    }
+    
+    #wrapper {
+        background: #000;
+        color: rgb(200, 200, 200);
+        width: 60%;
+        height: 800px;
+        margin-left: 33.5%;
+        margin-top: 5%;
+        /*margin: 0 auto;*/
+        /*border-style: solid;
+        border-width: 1px;*/
+    }
+    
+    #remoteVideo {
+        /*margin-left: 33%;*/
+        margin:0 auto;width:100px;
+        width: 100%;
+    }
+    
+    #title {
+        background-color: white;
+        position: relative;
+        width: 55.5%;
+        /*margin-left: 33%;*/
+        /*font-family: "Courier New";*/
+        color: #000;
+        font-size: 14px;
+        text-align: center;
+    }
+    
+    #chatroom {
+        border: 1px solid;
+        border-color: #A1A1A1;
+        overflow: auto;
+        background-color: #030303;
+        color: #C8C8C8;
+        /*position: relative;*/
+        width: 55.5%;
+        height: 25%;
+        /*margin-left: 33%;*/
+        font-family: "Courier New";
+        font-size: 12px;
+    }
+    
+    #chat_box {
+        background-color: #030303;
+        color: #C8C8C8;
+        font-family: "Courier New";
+        width: 90%;
+    }
+    
+    ul {
+        list-style-type: none;
+        padding: 3px;
+    }
+    
+    button {
+        background-color: #030303;
+        color: #C8C8C8;
+    }
+    
+    #align {
+        display: inline-block;
+        width: 100%;
+        margin-top: 1%;
+        /*margin-left: 33%;*/
+    }
+    
+    #input {
+        width: 55.5%;
+        margin-left: 0%;
+    }
+    
+    #imgs {
+        display: inline-block;
+        width: 55.5%;
+        /*margin-left: 33%;*/
+        position: relative;
+        text-align: center;
+    }
+    
+    #emo1 {
+        position: absolute;
+        display: inline-block;
+        width: 24px;
+        margin-left: -30px;
+    }
+    
+    #emo2 {
+        position: absolute;
+        display: inline-block;
+        width: 24px;
+        /*padding-left: 0px;*/
+    }
+    
+    #emo3 {
+        position: absolute;
+        display: inline-block;
+        width: 24px;
+        padding-left: 30px;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="wrapper">
+        <!--<div id="localVideo" mute></div>-->
+        <div id="remoteVideo" muted></div>
+        <!-- <div id="localVideo" muted></div> -->
+        <div id="title">////TRANSICONMORPHOSIS chat-room/fito_segrera & Emilio Vavarella////</div>
+        <div id="chatroom">
+            <ul id="chat_log">
+            </ul>
+        </div>
+        <div id="align">
+            <div id="input">
+                <input type="text" name="chat_box" value="" id="chat_box" placeholder="type to chat..." />
+                <button id="send">send</button>
+            </div>
+        </div>
+        <div id="imgs">
+            <div id="emoticons1">
+                <img id="emo1" src="img/smile.png"></img>
+            </div>
+            <div id="emoticons2">
+                <img id="emo2" src="img/wink.png"></img>
+            </div>
+            <div id="emoticons3">
+                <img id="emo3" src="img/sad.png"></img>
+            </div>
+        </div>
+    </div>
+    <script>
+    // var myLocalIp = '';
+    // $.ajax({url:"local_ip.txt",success:function(result){
+    //      myLocalIp = result;
+    //    }});
+
+    // create our webrtc connection
+    var webrtc = new SimpleWebRTC({
+        // the id/element dom element that will hold "our" video
+        //localVideoEl: 'localVideo',
+        // the id/element dom element that will hold remote videos
+        remoteVideosEl: '',
+        // immediately ask for camera access
+        autoRequestMedia: true,
+        debug: false,
+        detectSpeakingEvents: true,
+        autoAdjustMic: false
+    });
+
+    webrtc.on('readyToCall', function() {
+        webrtc.joinRoom('TRANSICONMORPHOSIS');
+    });
+
+    // we got access to the camera
+    webrtc.on('localStream', function(stream) {
+        var button = document.querySelector('form>button');
+        if (button) button.removeAttribute('disabled');
+        webrtc.mute();
+    });
+    // we did not get access to the camera
+    webrtc.on('localMediaError', function(err) {});
+
+    var sendChannel, receiveChannel;
+
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+
+    webrtc.on('videoAdded', function(video, peer) {
+        console.log('video added', peer);
+        var remote = document.getElementById('remoteVideo');
+        if (remote) {
+            var container = document.createElement('div');
+            container.className = 'videoContainer';
+            container.id = 'container_' + webrtc.getDomId(peer);
+            container.appendChild(video);
+
+            // suppress contextmenu
+            video.oncontextmenu = function() {
+                return false;
+            };
+
+            // resize the video on click
+            video.onclick = function() {
+                container.style.width = video.videoWidth + 'px';
+                container.style.height = video.videoHeight + 'px';
+            };
+
+            // show the ice connection state
+            if (peer && peer.pc) {
+                var connstate = document.createElement('div');
+                connstate.className = 'connectionstate';
+                container.appendChild(connstate);
+            }
+            remote.appendChild(container);
+        }
+    });
+
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+
+    jQuery(document).ready(function() {
+
+    	var userNameInput = prompt("Nickname: ");
+    	var userName = '[' + userNameInput + ']: ';
+
+        var log_chat_message = function(message) {
+            var li = jQuery('<li />').text(message);
+            jQuery('#chat_log').append(li);
+        };
+
+        var log_chat_img = function(img, user) {
+            var li;
+            if (img == 'smile') {
+                li = jQuery('<li />').append(user + "<img src='img/smile.png' />");
+                $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
+            } else if (img == 'wink') {
+                li = jQuery('<li />').append(user + "<img src='img/wink.png' />");
+                $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
+            } else if (img == 'sad') {
+                li = jQuery('<li />').append(user + "<img src='img/sad.png' />");
+                $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
+            }
+            jQuery('#chat_log').append(li);
+        };
+
+        var socket = io.connect('http://192.168.100.103:3300');
+
+        socket.on('entrance', function(data) {
+            log_chat_message(data.message);
+        });
+
+        socket.on('exit', function(data) {
+            log_chat_message(data.message);
+        });
+
+        socket.on('chat', function(data) {
+            //console.log(data);
+            if (data.message == 'smile') {
+                log_chat_img('smile', data.user);
+                $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
+            } else if (data.message == 'wink') {
+                log_chat_img('wink', data.user);
+                $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
+            } else if (data.message == 'sad') {
+                log_chat_img('sad', data.user);
+                $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
+            } else {
+                log_chat_message(data.message);
+                $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
+            }
+        });
+
+        //If the ENTER key is pressed after typing in the send box...
+        jQuery('#chat_box').keypress(function(event) {
+            if (event.which == 13) {
+                socket.emit('chat', {
+                    message: jQuery('#chat_box').val()
+                });
+                jQuery('#chat_box').val(userName + '');
+                $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
+            }
+        });
+        //If the send button is clicked...
+        jQuery('#send').click(function(event) {
+        	console.log(jQuery('#chat_box').val());
+            socket.emit('chat', {
+                message: jQuery('#chat_box').val()
+            });
+            jQuery('#chat_box').val(userName + '');
+            $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
+        });
+
+        //If SMILE emoticon is clicked...
+        jQuery('#emo1').click(function(event) {
+            socket.emit('chat', {
+                message: 'smile',
+                user: userName
+            });
+            $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
+        });
+        //If WINK emoticon is clicked...
+        jQuery('#emo2').click(function(event) {
+            socket.emit('chat', {
+                message: 'wink',
+                user: userName
+            });
+            $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
+        });
+        //If SAD emoticon is clicked...
+        jQuery('#emo3').click(function(event) {
+            socket.emit('chat', {
+                message: 'sad',
+                user: userName
+            });
+            $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
+        });
+
+    });
+
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    </script>
+</body>
+
+</html>

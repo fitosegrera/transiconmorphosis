@@ -18,14 +18,13 @@
   "author": "fito_segrera",
   "license": "MIT",
   "dependencies": {
-    "node-static": "~0.7.4",
-    "socket.io": "~1.0.6",
+    "arduino-firmata": "~0.3.1",
+    "connect": "~3.0.2",
     "express": "~4.6.1",
-    "my-ip":"~1.1.1",
-    "sys":"~0.0.1",
-    "http":"~0.0.0",
-    "connect":"~3.0.2",
-    "arduino-firmata":"~0.3.1",
-    "serialport":"~1.4.2"
+    "http": "~0.0.0",
+    "my-ip": "~1.1.1",
+    "serialport": "~1.4.2",
+    "socket.io": "~1.0.6",
+    "sys": "~0.0.1"
   }
 }

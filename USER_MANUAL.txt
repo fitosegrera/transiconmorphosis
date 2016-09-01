@@ -28,10 +28,8 @@ The chat application used in TRANSICONMORPHOSIS uses:
 For more information on these technologies please visit:
 	- http://nodejs.org/
 	- https://www.npmjs.org/package/socket.io
-	- https://www.npmjs.org/package/node-static
 	- https://www.npmjs.org/package/http
 	- https://www.npmjs.org/package/sys
-	- https://www.npmjs.org/package/connect
 	- https://www.npmjs.org/package/my-ip
 	- https://www.npmjs.org/package/arduino-firmata
 	- https://www.npmjs.org/package/serialport
@@ -44,8 +42,7 @@ For more information on these technologies please visit:
 |PREPARING THE MACHINES|
 ------------------------
 
-IMPORTANT NOTE: It is unconditional that both computers are connected to the same network with acces to the internet. The webRTC implementation in nodeJS uses a STUN server located at the url: 						   
-																						 	
+IMPORTANT NOTE: It is unconditional that both computers are connected to the same network with acces to the internet. The webRTC implementation in nodeJS uses a STUN server located at the url: 						   																	 	
 	stun:stun.l.google.com:19302														 
 
 Eachone of the two computers used in TRANSICONMORPHOSIS need to have installed:
@@ -81,7 +78,7 @@ This will re-install all the packages declared as dependencies in the file "pack
 --------------------
 |RUNNING THE SERVER|
 --------------------
-1. Connect the ARDUINO to the computer.
+1. Connect the ARDUINO to the computer (MAKE SURE ARDUINO IS LOADED WITH THE "STANDARD FIRMATA CODE FROM ARDUINO EXAMPLES").
 2. On the artist computer copy the folder "transiconmorphosis" on the desktop.
 3. Runing the server is extremely simple. Using the terminal window: 
 
