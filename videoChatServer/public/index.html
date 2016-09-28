@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <script src="http://192.168.100.103:3300/socket.io/socket.io.js"></script>
+    <script src="http://192.168.0.102:3300/socket.io/socket.io.js"></script>
     <script src="http://simplewebrtc.com/latest.js"></script>
     <script src="/lib/jquery-1.7.2.min.js"></script>
     <style type="text/css">
@@ -96,25 +96,26 @@
         text-align: center;
     }
     
-    #emo1 {
+    #smile {
         position: absolute;
         display: inline-block;
         width: 24px;
         margin-left: -30px;
     }
     
-    #emo2 {
+    #wink {
         position: absolute;
         display: inline-block;
         width: 24px;
+        margin-left: 0px;
         /*padding-left: 0px;*/
     }
     
-    #emo3 {
+    #sad {
         position: absolute;
         display: inline-block;
         width: 24px;
-        padding-left: 30px;
+        margin-left: 30px;
     }
     </style>
 </head>
@@ -137,13 +138,13 @@
         </div>
         <div id="imgs">
             <div id="emoticons1">
-                <img id="emo1" src="img/smile.png"></img>
+                <img id="smile" src="img/smile.png"></img>
             </div>
             <div id="emoticons2">
-                <img id="emo2" src="img/wink.png"></img>
+                <img id="wink" src="img/wink.png"></img>
             </div>
             <div id="emoticons3">
-                <img id="emo3" src="img/sad.png"></img>
+                <img id="sad" src="img/sad.png"></img>
             </div>
         </div>
     </div>
@@ -231,6 +232,7 @@
 
         var log_chat_img = function(img, user) {
             var li;
+            console.log(img);
             if (img == 'smile') {
                 li = jQuery('<li />').append(user + "<img src='img/smile.png' />");
                 $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
@@ -244,7 +246,7 @@
             jQuery('#chat_log').append(li);
         };
 
-        var socket = io.connect('http://192.168.100.103:3300');
+        var socket = io.connect('http://192.168.0.102:3300');
 
         socket.on('entrance', function(data) {
             log_chat_message(data.message);
@@ -255,7 +257,7 @@
         });
 
         socket.on('chat', function(data) {
-            //console.log(data);
+            console.log(data);
             if (data.message == 'smile') {
                 log_chat_img('smile', data.user);
                 $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
@@ -292,7 +294,8 @@
         });
 
         //If SMILE emoticon is clicked...
-        jQuery('#emo1').click(function(event) {
+        jQuery('#smile').click(function(event) {
+            //console.log(event)
             socket.emit('chat', {
                 message: 'smile',
                 user: userName
@@ -300,7 +303,8 @@
             $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
         });
         //If WINK emoticon is clicked...
-        jQuery('#emo2').click(function(event) {
+        jQuery('#wink').click(function(event) {
+            //console.log(event)
             socket.emit('chat', {
                 message: 'wink',
                 user: userName
@@ -308,7 +312,7 @@
             $("#chatroom").scrollTop($("#chatroom")[0].scrollHeight);
         });
         //If SAD emoticon is clicked...
-        jQuery('#emo3').click(function(event) {
+        jQuery('#sad').click(function(event) {
             socket.emit('chat', {
                 message: 'sad',
                 user: userName

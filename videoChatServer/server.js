@@ -32,39 +32,39 @@ arduino.on('connect', function(err){
 		socket.on('chat', function  (data) {
 		    chat_room.sockets.emit('chat', {message: '' + data.message, user: '' + data.user});
 		  	console.log("board version"+arduino.boardVersion);
-		  	console.log(data.message);
+		  	console.log(data);
 
 		  	//If the user sends an SMILY emoticon
 		  	if (data.message == 'smile'){
 			  	//Write to pin from arduino
-				arduino.digitalWrite(13, true);
+				arduino.digitalWrite(8, true);
 
 				//Delay before turning off
 				setTimeout(function(){
 					//Write to pin from arduino
-					arduino.digitalWrite(13, false);
+					arduino.digitalWrite(8, false);
 				},delay);
 			}
 			//If the user sends an WINK emoticon
-		  	if (data.message == 'smile'){
+		  	if (data.message == 'wink'){
 			  	//Write to pin from arduino
-				arduino.digitalWrite(12, true);
+				arduino.digitalWrite(9, true);
 
 				//Delay before turning off
 				setTimeout(function(){
 					//Write to pin from arduino
-					arduino.digitalWrite(13, false);
+					arduino.digitalWrite(9, false);
 				},delay);
 			}
 			//If the user sends an SAD emoticon
-		  	if (data.message == 'smile'){
+		  	if (data.message == 'sad'){
 			  	//Write to pin from arduino
-				arduino.digitalWrite(11, true);
+				arduino.digitalWrite(10, true);
 
 				//Delay before turning off
 				setTimeout(function(){
 					//Write to pin from arduino
-					arduino.digitalWrite(13, false);
+					arduino.digitalWrite(10, false);
 				},delay);
 			}
 		});
